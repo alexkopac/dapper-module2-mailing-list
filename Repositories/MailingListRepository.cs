@@ -1,3 +1,4 @@
+using System.Data;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using dapper_module2.Models;
@@ -16,7 +17,7 @@ public class MailingListRepository
     private SqlConnection CreateConnection() => new SqlConnection(_connectionString);
 
     // =========================================================================
-    // ЗАВДАННЯ 1: Вставка (INSERT)
+    // ЧАСТИНА 1 — ЗАВДАННЯ 1: Вставка (INSERT)
     // =========================================================================
 
     public int InsertCustomer(Customer customer)
@@ -85,7 +86,7 @@ public class MailingListRepository
     }
 
     // =========================================================================
-    // ЗАВДАННЯ 2: Оновлення (UPDATE)
+    // ЧАСТИНА 1 — ЗАВДАННЯ 2: Оновлення (UPDATE)
     // =========================================================================
 
     public bool UpdateCustomer(Customer customer)
@@ -140,7 +141,7 @@ public class MailingListRepository
     }
 
     // =========================================================================
-    // ЗАВДАННЯ 3: Видалення (DELETE)
+    // ЧАСТИНА 1 — ЗАВДАННЯ 3: Видалення (DELETE)
     // =========================================================================
 
     public bool DeleteCustomer(int id)
@@ -174,7 +175,7 @@ public class MailingListRepository
     }
 
     // =========================================================================
-    // ЗАВДАННЯ 4: Спеціалізовані вибірки (SELECT з фільтрацією)
+    // ЧАСТИНА 1 — ЗАВДАННЯ 4: Спеціалізовані вибірки
     // =========================================================================
 
     public IEnumerable<City> GetCitiesByCountry(int countryId)
@@ -207,7 +208,43 @@ public class MailingListRepository
         return db.Query<PromotionalItem>(sql, new { SectionId = sectionId });
     }
 
-    // Допоміжні методи перегляду загальних списків для меню
+    // =========================================================================
+    // ЧАСТИНА 2 — ЗАВДАННЯ 3: Збережені процедури (Dapper)
+    // =========================================================================
+
+    public IEnumerable<SectionPromoStats> GetTop3SectionsByPromoCount()
+    {
+        using var db = CreateConnection();
+        return db.Query<SectionPromoStats>(
+            "sp_GetTop3SectionsByPromoCount",
+            commandType: CommandType.StoredProcedure);
+    }
+
+    public SectionPromoStats? GetMostPromoItemsSection()
+    {
+        using var db = CreateConnection();
+        return db.QueryFirstOrDefault<SectionPromoStats>(
+            "sp_GetTop1SectionByPromoCount",
+            commandType: CommandType.StoredProcedure);
+    }
+
+    public IEnumerable<SectionPromoStats> GetBottom3SectionsByPromoCount()
+    {
+        using var db = CreateConnection();
+        return db.Query<SectionPromoStats>(
+            "sp_GetBottom3SectionsByPromoCount",
+            commandType: CommandType.StoredProcedure);
+    }
+
+    public SectionPromoStats? GetLeastPromoItemsSection()
+    {
+        using var db = CreateConnection();
+        return db.QueryFirstOrDefault<SectionPromoStats>(
+            "sp_GetBottom1SectionByPromoCount",
+            commandType: CommandType.StoredProcedure);
+    }
+
+    // Допоміжні методи перегляду списків
     public IEnumerable<Country> GetAllCountries()
     {
         using var db = CreateConnection();

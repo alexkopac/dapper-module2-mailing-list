@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using dapper_module2.Models;
 using dapper_module2.Repositories;
 
@@ -13,22 +13,27 @@ var repo = new MailingListRepository(connectionString);
 while (true)
 {
     Console.WriteLine("\n================ СПИСОК РОЗСИЛКИ (DAPPER) ================");
-    Console.WriteLine("--- Завдання 1: Додавання ---");
+    Console.WriteLine("--- Частина 1: Додавання ---");
     Console.WriteLine(" 1. Додати покупця            2. Додати країну");
     Console.WriteLine(" 3. Додати місто              4. Додати розділ");
     Console.WriteLine(" 5. Додати акційний товар     6. Підписати покупця на розділ");
-    Console.WriteLine("--- Завдання 2: Оновлення ---");
+    Console.WriteLine("--- Частина 1: Оновлення ---");
     Console.WriteLine(" 7. Оновити покупця           8. Оновити країну");
     Console.WriteLine(" 9. Оновити місто            10. Оновити розділ");
     Console.WriteLine("11. Оновити акційний товар");
-    Console.WriteLine("--- Завдання 3: Видалення ---");
+    Console.WriteLine("--- Частина 1: Видалення ---");
     Console.WriteLine("12. Видалити покупця         13. Видалити країну");
     Console.WriteLine("14. Видалити місто           15. Видалити розділ");
     Console.WriteLine("16. Видалити акційний товар");
-    Console.WriteLine("--- Завдання 4: Вибірки ---");
+    Console.WriteLine("--- Частина 1: Вибірки ---");
     Console.WriteLine("17. Міста певної країни");
     Console.WriteLine("18. Розділи певного покупця");
     Console.WriteLine("19. Акційні товари певного розділу");
+    Console.WriteLine("--- Частина 2: Збережені процедури (Завдання 3) ---");
+    Console.WriteLine("20. Топ-3 розділів за кількістю акційних товарів");
+    Console.WriteLine("21. Розділ з найбільшою кількістю акційних товарів");
+    Console.WriteLine("22. Топ-3 розділів з найменшою кількістю акційних товарів");
+    Console.WriteLine("23. Розділ з найменшою кількістю акційних товарів");
     Console.WriteLine(" 0. Вихід");
     Console.Write("Оберіть дію: ");
 
@@ -270,6 +275,30 @@ while (true)
                 Console.WriteLine("Акційні товари обраного розділу:");
                 foreach (var item in items)
                     Console.WriteLine($"  [{item.Id}] {item.Name} — знижка {item.DiscountPercent}% (до {item.EndDate:yyyy-MM-dd})");
+                break;
+
+            case "20":
+                Console.WriteLine("Топ-3 розділів за кількістю акційних товарів:");
+                foreach (var stat in repo.GetTop3SectionsByPromoCount())
+                    Console.WriteLine($"  [{stat.SectionId}] {stat.SectionName} — {stat.PromoItemsCount} шт.");
+                break;
+
+            case "21":
+                var maxSec = repo.GetMostPromoItemsSection();
+                if (maxSec != null)
+                    Console.WriteLine($"Найбільше акційних товарів: [{maxSec.SectionId}] {maxSec.SectionName} — {maxSec.PromoItemsCount} шт.");
+                break;
+
+            case "22":
+                Console.WriteLine("Топ-3 розділів з найменшою кількістю акційних товарів:");
+                foreach (var stat in repo.GetBottom3SectionsByPromoCount())
+                    Console.WriteLine($"  [{stat.SectionId}] {stat.SectionName} — {stat.PromoItemsCount} шт.");
+                break;
+
+            case "23":
+                var minSec = repo.GetLeastPromoItemsSection();
+                if (minSec != null)
+                    Console.WriteLine($"Найменше акційних товарів: [{minSec.SectionId}] {minSec.SectionName} — {minSec.PromoItemsCount} шт.");
                 break;
 
             case "0":

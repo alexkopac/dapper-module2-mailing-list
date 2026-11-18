@@ -38,3 +38,10 @@ public class PromotionalItem
     public DateTime EndDate { get; set; }
     public int SectionId { get; set; }
 }
+
+public class SectionPromoStats
+{
+    public int SectionId { get; set; }
+    public string SectionName { get; set; } = string.Empty;
+    public int PromoItemsCount { get; set; }
+}
